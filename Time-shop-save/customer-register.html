@@ -129,16 +129,13 @@ button:hover {opacity:0.95;}
   </form>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
-// Dual-mode register: prefer Firebase when configured; otherwise use localStorage fallback.
-// Also if Firebase fails, fall back to localStorage so site remains usable offline/local.
-
 const firebaseConfig = {
- apiKey: "AIzaSyCws2eOt3muKCpjHIxB3vUlOHGA06xLhtc",
+  apiKey: "AIzaSyCws2eOt3muKCpjHIxB3vUlOHGA06xLhtc",
   authDomain: "time-shop-save.firebaseapp.com",
   projectId: "time-shop-save",
   storageBucket: "time-shop-save.firebasestorage.app",
@@ -148,10 +145,10 @@ const firebaseConfig = {
 
 let firebaseAvailable = false;
 try {
-  // Detect if firebase config is filled
-  if (typeof firebase !== 'undefined' && firebase && firebaseConfig && firebaseConfig.apiKey && !String(firebaseConfig.apiKey).includes('YOUR_')) {
+  if (typeof firebase !== 'undefined') {
     firebase.initializeApp(firebaseConfig);
-    firebaseAvailable = !!(firebase.auth && firebase.firestore);
+    // Use Compat Auth
+    firebaseAvailable = !!firebase.auth();
   }
 } catch (e) {
   console.warn('Firebase init skipped or failed:', e);
@@ -172,17 +169,14 @@ function saveLocalUser({ name, email, phone, password }) {
   };
   localStorage.setItem(key, JSON.stringify(userObj));
 
-  // Append to tss_users_v1 for compatibility with other pages that read this demo list
   try {
     const arr = JSON.parse(localStorage.getItem('tss_users_v1') || '[]');
     arr.push({ id: userObj.id, name: userObj.name, email: userObj.email, phone: userObj.phone, role: 'customer' });
     localStorage.setItem('tss_users_v1', JSON.stringify(arr));
   } catch (e) {}
 
-  // Set remembered session
   localStorage.setItem('rememberUser', userObj.email);
   localStorage.setItem('tss_last_login', userObj.email);
-  // ensure customer balance keys exist
   if (!localStorage.getItem('customer_balance_' + userObj.email)) localStorage.setItem('customer_balance_' + userObj.email, '0');
   if (!localStorage.getItem('customer_currency_' + userObj.email)) localStorage.setItem('customer_currency_' + userObj.email, 'KSH');
 
@@ -219,50 +213,47 @@ form.addEventListener("submit", async e => {
     return;
   }
 
-  // if firebase is available and configured, try cloud registration first
+  // Firebase
   if (firebaseAvailable) {
     try {
-      const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+      
+      const cred = await auth.createUserWithEmailAndPassword(email, password);
       const uid = cred.user.uid;
-      await firebase.firestore().collection("users").doc(uid).set({
+      
+      await db.collection("users").doc(uid).set({
         name: name,
         email: email,
         phone: phone,
         role: "customer",
         dateRegistered: new Date().toISOString()
       });
-      // set local remember
+      
       localStorage.setItem('rememberUser', email);
       localStorage.setItem('tss_last_login', email);
       showSuccess("Registration successful! Redirecting...");
-      // FIXED: Redirect to correct profile page
       setTimeout(() => window.location.href = "profile.html", 1200);
       return;
     } catch (err) {
-      console.warn('Firebase registration failed, falling back to local:', err);
-      // if the error is that email is already used, but local user exists, inform user
+      console.warn('Firebase registration failed:', err);
       if (err.code === "auth/email-already-in-use") {
-        // If local user exists, inform; otherwise still fallback to creating local user
         if (localStorage.getItem('user:' + email)) {
           showError("This email is already registered (local). Try logging in.");
           return;
         }
-        // else continue to fallback local registration
       }
-      // continue to fallback below
     }
   }
 
-  // Local fallback registration
+  // Local fallback
   try {
-    // If local user exists, do not overwrite
     if (localStorage.getItem('user:' + email)) {
       showError("This email is already registered locally. Please login.");
       return;
     }
     saveLocalUser({ name, email, phone, password });
     showSuccess("Registration successful (local)! Redirecting...");
-    // FIXED: Redirect to correct profile page
     setTimeout(() => window.location.href = "profile.html", 900);
   } catch (err) {
     console.error(err);

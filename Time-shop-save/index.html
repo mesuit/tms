@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Time Shop Save — Welcome</title>
+
+  <!-- Favicon Option A — Elegant gradient rounded-square with TSS -->
+  <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%237b2ff7'/><stop offset='1' stop-color='%23ff6ec7'/></linearGradient></defs><rect width='100' height='100' rx='16' fill='url(%23g)'/><text x='50' y='60' font-family='Inter,Arial,sans-serif' font-weight='800' font-size='36' text-anchor='middle' fill='%23070416'>TSS</text></svg>">
+  <link rel="apple-touch-icon"
+        href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='g2' x1='0' x2='1'><stop offset='0' stop-color='%237b2ff7'/><stop offset='1' stop-color='%23ff6ec7'/></linearGradient></defs><rect width='120' height='120' rx='20' fill='url(%23g2)'/><text x='60' y='78' font-family='Inter,Arial,sans-serif' font-weight='800' font-size='44' text-anchor='middle' fill='%23070416'>TSS</text></svg>">
+  <meta name="theme-color" content="#7b2ff7">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700,800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg1: #070416;
+      --g1: #7b2ff7; --g2: #ff6ec7; --g3: #2be7ff;
+      --text: #eaf3ff;
+      --muted: rgba(234,243,255,0.65);
+      --accent-grad: linear-gradient(90deg, var(--g1), var(--g2), var(--g3));
+    }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: Inter, sans-serif;
+      color: var(--text);
+      background: var(--bg1);
+      overflow-x: hidden;
+    }
+
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 40px;
+      background: rgba(7,4,22,0.95);
+      backdrop-filter: blur(6px);
+      position: sticky; top: 0; z-index: 100;
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-mark {
+      width: 56px; height: 56px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; background: var(--accent-grad); color: #070416;
+      box-shadow: 0 0 20px rgba(123,47,247,0.25);
+    }
+
+    .btn {
+      padding: 12px 20px; border-radius: 10px; cursor: pointer;
+      font-weight: 600; border: none; transition: all .3s ease;
+    }
+    .btn.primary { background: var(--accent-grad); color: #070416; }
+    .btn.ghost { border: 1px solid rgba(255,255,255,0.2); background: transparent; color: var(--text); }
+    .btn:hover { transform: translateY(-3px); }
+
+    .hero {
+      text-align: center;
+      padding: 80px 20px 100px;
+      background: radial-gradient(circle at 30% 20%, rgba(123,47,247,0.08), transparent),
+                  linear-gradient(180deg, #05020b, #0b0630, #07132a);
+    }
+
+    .hero h2 {
+      font-size: 30px; font-weight: 800;
+      background: var(--accent-grad); -webkit-background-clip: text; color: transparent;
+    }
+    .hero p { color: var(--muted); max-width: 600px; margin: 10px auto 30px; }
+
+    .cta-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+    .socials {
+      display: flex; gap: 18px; justify-content: center; margin-top: 30px;
+    }
+    .socials a {
+      width: 52px; height: 52px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--accent-grad); color: #070416;
+      font-size: 26px; text-decoration: none;
+      box-shadow: 0 0 20px rgba(123,47,247,0.35);
+      transition: all .3s ease;
+    }
+    .socials a:hover { transform: scale(1.2) rotate(5deg); }
+
+    .how-it-works {
+      padding: 60px 20px 80px; background: #08071b;
+    }
+    .how-it-works h3 {
+      text-align: center; font-size: 26px;
+      background: var(--accent-grad); -webkit-background-clip: text; color: transparent;
+      margin-bottom: 30px;
+    }
+
+    .steps {
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+      gap: 24px; max-width: 1000px; margin: 0 auto;
+    }
+    .step {
+      background: rgba(255,255,255,0.04);
+      border-radius: 14px; padding: 20px; text-align: center;
+      transition: all .3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .step:hover { transform: translateY(-6px); }
+
+    .step img {
+      width: 100%; height: 200px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 2px solid rgba(255,255,255,0.08);
+    }
+
+    .step p { color: var(--muted); font-size: 14px; }
+
+    .stats {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-top: 60px;
+    }
+    .stat {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px; padding: 16px 28px;
+      text-align: center; min-width: 150px;
+    }
+    .stat h4 { margin: 0; font-size: 22px; color: var(--g2); }
+    .stat span { color: var(--muted); font-size: 13px; }
+
+    footer { background: #060518; text-align: center; padding: 30px; color: var(--muted); font-size: 13px; }
+
+    #splash {
+      position: fixed; inset: 0; display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(180deg, rgba(7,4,22,0.98), rgba(7,4,22,0.92));
+      z-index: 1100; transition: opacity .4s ease;
+    }
+    #splash.hidden { opacity: 0; visibility: hidden; pointer-events:none; }
+
+    .loader-box {
+      width: 120px; height: 120px; border-radius:16px;
+      background: var(--accent-grad); display:flex; align-items:center; justify-content:center;
+      color:#070416; font-weight:800; font-size:28px;
+      box-shadow: 0 12px 40px rgba(123,47,247,0.18);
+    }
+
+    @media(max-width:600px){
+      header{flex-direction:column;gap:10px;padding:10px 20px;}
+      .hero h2{font-size:24px;}
+      .socials { gap: 10px; }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-mark">TSS</div>
+    <div>
+      <h1>Time Shop Save</h1>
+      <small style="color:var(--muted)">Local shops • Smart pickups</small>
+    </div>
+  </div>
+  <div>
+    <button class="btn ghost" id="btnHow">How it works</button>
+    <button class="btn primary" id="btnStart">Let’s Begin</button>
+  </div>
+</header>
+
+<section class="hero">
+  <h2>Save Time. Shop Smart. Live Better.</h2>
+  <p>Connect with your nearest shop, schedule pickups, and skip long lines with Time Shop Save.</p>
+  <div class="cta-row">
+    <button class="btn primary" id="btnCustomer">Join as Customer</button>
+    <button class="btn ghost" id="btnShop">Join as Shopkeeper</button>
+  </div>
+
+  <div class="socials">
+    <a href="https://wa.me/447842063898" target="_blank" title="WhatsApp">
+      <img src="https://cdn-icons-png.flaticon.com/512/3670/3670051.png" width="26" height="26" alt="WhatsApp"/>
+    </a>
+    <a href="https://www.instagram.com" target="_blank" title="Instagram">
+      <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" width="26" height="26" alt="Instagram"/>
+    </a>
+    <a href="https://www.tiktok.com" target="_blank" title="TikTok">
+      <img src="https://cdn-icons-png.flaticon.com/512/3046/3046120.png" width="26" height="26" alt="TikTok"/>
+    </a>
+  </div>
+</section>
+
+<section class="how-it-works" id="how-section">
+  <h3>How It Works</h3>
+  <div class="steps">
+    <div class="step">
+      <img src="https://images.unsplash.com/photo-1543165365-c7e6691b85e7?w=600" alt="Find shops">
+      <h4>1. Find Nearby Shops</h4>
+      <p>Browse nearby shops instantly using smart filters for what you need faster.</p>
+    </div>
+    <div class="step">
+      <img src="https://images.unsplash.com/photo-1616627456363-5d6b07b62889?w=600" alt="Order">
+      <h4>2. Place Your Order</h4>
+      <p>Select items, confirm pickup time, and pay securely.</p>
+    </div>
+    <div class="step">
+      <img src="https://images.unsplash.com/photo-1556742049-3c52d6e88c62?w=600" alt="Pickup">
+      <h4>3. Pickup Instantly</h4>
+      <p>Arrive at your scheduled time — your order will be ready. No waiting, just convenience.</p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <h4 id="users">0+</h4>
+      <span>Active Users</span>
+    </div>
+    <div class="stat">
+      <h4 id="shops">0+</h4>
+      <span>Partner Shops</span>
+    </div>
+    <div class="stat">
+      <h4 id="saves">0+</h4>
+      <span>Minutes Saved</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  By continuing you agree to our Terms & Privacy • © 2025 Time Shop Save
+</footer>
+
+<div id="splash"><div class="loader-box">TSS</div></div>
+
+<!-- Splash screen logic (always last, always works) -->
+<script>
+  document.body.style.overflow = 'hidden';
+  setTimeout(function() {
+    document.getElementById('splash').classList.add('hidden');
+    document.body.style.overflow = '';
+  }, 1000);
+
+  // Button navigation logic
+  document.addEventListener('DOMContentLoaded', function() {
+    // How it works
+    document.getElementById('btnHow').onclick = function() {
+      document.getElementById('how-section').scrollIntoView({behavior:'smooth'});
+    };
+    // Let's Begin
+    document.getElementById('btnStart').onclick = function() {
+      window.location.href = 'explore.html';
+    };
+    // Join as Customer
+    document.getElementById('btnCustomer').onclick = function() {
+      window.location.href = 'customer-login.html';
+    };
+    // Join as Shopkeeper
+    document.getElementById('btnShop').onclick = function() {
+      window.location.href = 'shopkeeper-login.html';
+    };
+  });
+</script>
+
+<!-- LocalStorage-driven, authoritative counts and details -->
+<script>
+(function(){
+  const KEY_USERS = 'counts_users';
+  const KEY_SHOPS = 'counts_shops';
+  const KEY_MINUTES = 'counts_minutesSaved';
+
+  const DOM_USERS = document.getElementById('users');
+  const DOM_SHOPS = document.getElementById('shops');
+  const DOM_MINUTES = document.getElementById('saves');
+
+  function toNum(v){ return Number(v || 0) || 0; }
+  function n(v){ return Math.round(Number(v||0)); }
+
+  // Safe JSON parse
+  function tryParse(val){
+    try { return JSON.parse(val); } catch { return null; }
+  }
+
+  // Primary authoritative computation:
+  function computeCountsFromStorage(){
+    const customers = new Map(); // key -> { email, registeredAt, orders, minutes }
+    const shops = new Map();     // shopName -> { shopName, owner, orders, minutes }
+
+    // 1) Read local_shops array
+    const localShopsArr = tryParse(localStorage.getItem('local_shops')) || [];
+    if(Array.isArray(localShopsArr)){
+      localShopsArr.forEach(s => {
+        const name = s.shopName || s.name || ('shop_'+Math.random().toString(36).slice(2,7));
+        shops.set(String(name), { shopName: String(name), owner: s.ownerEmail || s.email || '', orders:0, minutes:0 });
+      });
+    }
+
+    // 2) Scan user: records
+    for(const k in localStorage){
+      if(!k.startsWith('user:')) continue;
+      const u = tryParse(localStorage.getItem(k));
+      if(!u) continue;
+      const email = u.email || (k.replace('user:',''));
+      if(u.role === 'shop' || u.shopName){
+        const name = u.shopName || u.name || email;
+        if(!shops.has(name)) shops.set(String(name), { shopName: String(name), owner: email, orders:0, minutes:0 });
+      } else {
+        const existing = customers.get(email) || { email, registeredAt: u.createdAt || u.createdAt || null, orders:0, minutes:0 };
+        customers.set(email, existing);
+      }
+    }
+
+    // 3) Scan other shop keys (fallback)
+    for(const k in localStorage){
+      if(k.startsWith('shopsData') || k.startsWith('shop:') || k.startsWith('shop_')){
+        const v = tryParse(localStorage.getItem(k));
+        if(Array.isArray(v)){
+          v.forEach(s => {
+            const name = s.shopName || s.name || s.id;
+            if(name && !shops.has(name)) shops.set(String(name), { shopName: String(name), owner: s.ownerEmail || '', orders:0, minutes:0 });
+          });
+        } else if(v && typeof v === 'object' && (v.shopName || v.name)){
+          const name = v.shopName || v.name;
+          if(name && !shops.has(name)) shops.set(String(name), { shopName: String(name), owner: v.ownerEmail||'', orders:0, minutes:0 });
+        }
+      }
+    }
+
+    // 4) Orders: gather minutesSaved and counts
+    for(const k in localStorage){
+      if(!k.startsWith('orders_') && !k.startsWith('shop_orders_')) continue;
+      const arr = tryParse(localStorage.getItem(k)) || [];
+      if(!Array.isArray(arr)) continue;
+      arr.forEach(o => {
+        if(!o) return;
+        if(k.startsWith('orders_')){
+          const custKey = k.replace('orders_','');
+          const custEmail = custKey;
+          if(!customers.has(custEmail)) customers.set(custEmail, { email: custEmail, registeredAt: null, orders:0, minutes:0 });
+          const cust = customers.get(custEmail);
+          cust.orders = (cust.orders || 0) + 1;
+          const m = Number(o.minutesSaved || o.minutes || o.savedMinutes || 0) || 0;
+          if(m) cust.minutes = (cust.minutes || 0) + m;
+        }
+        if(k.startsWith('shop_orders_')){
+          const shopKey = decodeURIComponent(k.replace('shop_orders_',''));
+          if(!shops.has(shopKey)) shops.set(shopKey, { shopName: shopKey, owner: '', orders:0, minutes:0 });
+          const shp = shops.get(shopKey);
+          shp.orders = (shp.orders || 0) + 1;
+          const m = Number(o.minutesSaved || o.minutes || o.savedMinutes || 0) || 0;
+          if(m) shp.minutes = (shp.minutes || 0) + m;
+        }
+      });
+    }
+
+    // Compute totals
+    let totalUsers = customers.size;
+    let totalShops = shops.size;
+    let totalMinutes = 0;
+    customers.forEach(c => { totalMinutes += Number(c.minutes || 0); });
+    shops.forEach(s => { totalMinutes += Number(s.minutes || 0); });
+
+    const customersList = Array.from(customers.values()).map(c => ({
+      email: c.email,
+      registeredAt: c.registeredAt || '',
+      orders: n(c.orders||0),
+      minutesSaved: n(c.minutes||0)
+    })).sort((a,b) => (b.orders - a.orders) || (b.minutesSaved - a.minutesSaved));
+
+    const shopsList = Array.from(shops.values()).map(s => ({
+      shopName: s.shopName,
+      owner: s.owner || '',
+      orders: n(s.orders||0),
+      minutesSaved: n(s.minutes||0)
+    })).sort((a,b) => (b.orders - a.orders) || (b.minutesSaved - a.minutesSaved));
+
+    return {
+      users: totalUsers,
+      shops: totalShops,
+      minutes: n(totalMinutes),
+      customersList,
+      shopsList
+    };
+  }
+
+  function writeCountsToStorage(counts){
+    try {
+      localStorage.setItem(KEY_USERS, String(counts.users));
+      localStorage.setItem(KEY_SHOPS, String(counts.shops));
+      localStorage.setItem(KEY_MINUTES, String(counts.minutes));
+    } catch(e){
+      console.warn('Could not write counts to localStorage', e);
+    }
+  }
+
+  function readCountsFromStorage(){
+    return {
+      users: toNum(localStorage.getItem(KEY_USERS)),
+      shops: toNum(localStorage.getItem(KEY_SHOPS)),
+      minutes: toNum(localStorage.getItem(KEY_MINUTES))
+    };
+  }
+
+  function formatCountWithPlus(n){
+    if(n === 0) return '0+';
+    if(n >= 1000000) return (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M+';
+    if(n >= 1000) return (n/1000).toFixed(1).replace(/\.0$/,'') + 'k+';
+    return String(n) + '+';
+  }
+
+  // render numeric counts into UI (with +)
+  function renderCounts(){
+    const stored = readCountsFromStorage();
+    DOM_USERS.textContent = formatCountWithPlus(stored.users || 0);
+    DOM_SHOPS.textContent = formatCountWithPlus(stored.shops || 0);
+    DOM_MINUTES.textContent = formatCountWithPlus(stored.minutes || 0);
+  }
+
+  // Expose helper API and recompute logic
+  window.tssCounts = {
+    recompute: function(){
+      const computed = computeCountsFromStorage();
+      writeCountsToStorage({ users: computed.users, shops: computed.shops, minutes: computed.minutes });
+      renderCounts();
+      // store details for potential admin use (not shown on public page)
+      localStorage.setItem('counts_details_customers', JSON.stringify(computed.customersList));
+      localStorage.setItem('counts_details_shops', JSON.stringify(computed.shopsList));
+      return computed;
+    },
+    read: readCountsFromStorage,
+    set: function(type, value){
+      value = Number(value) || 0;
+      if(type === 'users') localStorage.setItem(KEY_USERS, String(value));
+      if(type === 'shops') localStorage.setItem(KEY_SHOPS, String(value));
+      if(type === 'minutes') localStorage.setItem(KEY_MINUTES, String(value));
+      renderCounts();
+    },
+    increment: function(type, by){
+      by = Number(by) || 1;
+      const cur = readCountsFromStorage();
+      if(type === 'users') this.set('users', cur.users + by);
+      if(type === 'shops') this.set('shops', cur.shops + by);
+      if(type === 'minutes') this.set('minutes', cur.minutes + by);
+    },
+    details: function(){
+      const customers = tryParse(localStorage.getItem('counts_details_customers')) || [];
+      const shops = tryParse(localStorage.getItem('counts_details_shops')) || [];
+      return { customers, shops };
+    },
+    resetAndReseed: function(){
+      localStorage.removeItem(KEY_USERS);
+      localStorage.removeItem(KEY_SHOPS);
+      localStorage.removeItem(KEY_MINUTES);
+      return this.recompute();
+    }
+  };
+
+  // Listen for storage changes and recompute when authoritative keys change
+  window.addEventListener('storage', function(e){
+    if(!e.key) return;
+    const sourceKeys = ['tss_users_v1','tss_shops_v1','local_shops','shopsData'];
+    if(sourceKeys.includes(e.key) || e.key.startsWith('user:') || e.key.startsWith('orders_') || e.key.startsWith('shop_orders_') || e.key.startsWith('cart_')) {
+      try { window.tssCounts.recompute(); } catch(err) { renderCounts(); }
+    } else if([KEY_USERS, KEY_SHOPS, KEY_MINUTES].includes(e.key)) {
+      renderCounts();
+    }
+  }, false);
+
+  // On first load compute authoritative counts
+  document.addEventListener('DOMContentLoaded', function(){
+    try {
+      const stored = window.tssCounts.read();
+      if(!stored.users || !stored.shops || !stored.minutes){
+        const computed = window.tssCounts.recompute();
+      } else {
+        renderCounts();
+        try { window.tssCounts.recompute(); } catch(e) {}
+      }
+    } catch(e){
+      try { window.tssCounts.recompute(); } catch(e2) { console.error('Counts init error', e2); }
+    }
+    // Keep counts fresh periodically
+    setInterval(()=> { try { window.tssCounts.recompute(); } catch(e){} }, 30000);
+  });
+})();
+</script>
+</body>
+</html>

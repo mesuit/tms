@@ -25,14 +25,33 @@
     <input id="regEmail" type="email" placeholder="Email" required>
     <input id="regPassword" type="password" placeholder="Password" required>
     <input id="regShop" type="text" placeholder="Shop name" required>
+    
     <select id="regCategory" required>
       <option value="">Select shop category</option>
-      <option value="Shop">Shop</option>
+      <option value="Shop">General Shop</option>
+      <option value="Supermarket">Supermarket</option>
+      <option value="Grocery">Grocery / Mama Mboga</option>
       <option value="Electronics">Electronics</option>
-      <option value="Fashion">Fashion</option>
-      <option value="Food">Food</option>
+      <option value="Fashion">Fashion & Clothing</option>
+      <option value="Pharmacy">Pharmacy / Chemist</option>
+      <option value="Bakery">Bakery</option>
+      <option value="Restaurants">Restaurant / Hotel</option>
+      <option value="Food">Fast Food</option>
+      <option value="Butchery">Butchery</option>
+      <option value="Barbershop">Barbershop</option>
+      <option value="Salon">Salon & Spa</option>
+      <option value="Beauty">Beauty & Cosmetics</option>
+      <option value="Hardware">Hardware</option>
+      <option value="Mobile">Mobile Phones</option>
+      <option value="Sports">Sports Equipment</option>
+      <option value="Books">Bookshop / Stationery</option>
+      <option value="Gifts">Gifts</option>
+      <option value="Jewelry">Jewelry</option>
+      <option value="Pet Store">Pet Store</option>
+      <option value="Liquor Store">Liquor Store</option>
       <option value="Other">Other</option>
     </select>
+
     <button type="submit" id="registerBtn">Register Shop</button>
     <div id="formMsg" class="error"></div>
     <div id="formSuccess" class="success"></div>
@@ -87,6 +106,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
       shopName: shopName,
       category: category,
       role: 'shop',
+      status: 'Active', // Default to active so they appear on Explore immediately
       createdAt: new Date().toISOString()
     });
 

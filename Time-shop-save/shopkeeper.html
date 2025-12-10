@@ -8,11 +8,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700,800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  /* --- RESTORED MISSING COLOR VARIABLE BELOW --- */
   :root{
     --bg1:#070416; --g1:#7b2ff7; --g2:#ff6ec7; --g3:#2be7ff; --text:#eaf3ff; 
     --muted:rgba(234,243,255,0.65); --card-bg:rgba(255,255,255,0.03); 
-    --accent-grad: linear-gradient(90deg,var(--g1),var(--g2),var(--g3)); /* FIXED */
+    --accent-grad: linear-gradient(90deg,var(--g1),var(--g2),var(--g3));
     --card-shadow:0 10px 40px rgba(0,0,0,0.6); --active:#2be72b; --danger:#ff4b4b; 
     --sidebar-w:84px; --panel-w:320px;
   }
@@ -36,27 +35,27 @@
   .product img{width:60px;height:60px;object-fit:cover;border-radius:8px}
   
   /* VISIBLE BUTTONS */
-  .btn {
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 0;
-    background: var(--accent-grad); /* Now defined! */
-    color: #071126;
-    font-weight: 800;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
+  .btn { padding: 10px 14px; border-radius: 8px; border: 0; background: var(--accent-grad); color: #071126; font-weight: 800; cursor: pointer; transition: transform 0.2s; }
   .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-  
   .btn.ghost{background:transparent; border:2px solid var(--g3); color:var(--g3); font-weight:700;}
   
   input,select{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.3);color:var(--text);width:100%; margin-bottom: 10px;}
   label {font-size: 12px; color: var(--muted); display: block; margin-bottom: 4px;}
   .side-panel{display:flex;flex-direction:column;gap:12px;}
-  
-  .orders-list { display:flex; flex-direction:column; gap:10px; } /* Added class for layout */
+  .orders-list { display:flex; flex-direction:column; gap:10px; }
   .order-item{padding:10px; background:rgba(255,255,255,0.06); border-radius:8px; margin-bottom:8px; border:1px solid rgba(255,255,255,0.05);}
   .w-row { display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.02); margin-bottom:5px; border-radius:6px;}
+
+  /* --- TOGGLE SWITCH STYLES --- */
+  .switch-container { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); margin-top: 10px; }
+  .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 24px; }
+  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+  input:checked + .slider { background-color: var(--active); }
+  input:focus + .slider { box-shadow: 0 0 1px var(--active); }
+  input:checked + .slider:before { transform: translateX(22px); }
+  #statusLabel { font-weight: 800; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -157,6 +156,19 @@
         </div>
 
         <aside class="side-panel">
+          
+          <div class="card">
+            <div class="panel-title" style="font-size:14px; margin-bottom:5px;">Shop Status</div>
+            <div class="switch-container">
+              <span id="statusLabel" style="color:var(--danger);">CLOSED</span>
+              <label class="switch">
+                <input type="checkbox" id="shopStatusToggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div style="font-size:10px; color:var(--muted); margin-top:5px;">Turn OFF to hide shop from customers.</div>
+          </div>
+
           <div class="card">
             <div class="panel-title" style="font-size:14px">Recent Activity</div>
             <div id="recentActivity" style="font-size:12px; color:var(--muted)">Loading...</div>
@@ -197,8 +209,9 @@ auth.onAuthStateChanged(async (user) => {
     currentUser = user;
     loadProfile();
     loadProducts();
-    loadOrdersAndWallet(); // This loads orders AND calculates wallet
+    loadOrdersAndWallet();
     setupRealtimeWithdrawals();
+    listenForShopStatus(); // NEW LISTENER
   } else {
     window.location.href = 'shopkeeper-login.html';
   }
@@ -225,14 +238,48 @@ const toBase64 = file => new Promise((resolve, reject) => {
     reader.onerror = error => reject(error);
 });
 
-// --- 1. REAL-TIME WITHDRAWALS ---
+// --- NEW: SHOP STATUS TOGGLE LOGIC ---
+function listenForShopStatus() {
+  const toggle = document.getElementById('shopStatusToggle');
+  const label = document.getElementById('statusLabel');
+  
+  // Real-time listener for status
+  db.collection('shopkeepers').doc(currentUser.uid).onSnapshot(doc => {
+    if(doc.exists) {
+      const data = doc.data();
+      const isActive = data.status === 'Active';
+      
+      // Update UI
+      toggle.checked = isActive;
+      label.textContent = isActive ? 'OPEN' : 'CLOSED';
+      label.style.color = isActive ? 'var(--active)' : 'var(--danger)';
+    }
+  });
+
+  // Handle Change
+  toggle.addEventListener('change', async (e) => {
+    const newStatus = e.target.checked ? 'Active' : 'Inactive';
+    // Optimistic UI
+    label.textContent = newStatus === 'Active' ? 'OPEN' : 'CLOSED';
+    label.style.color = newStatus === 'Active' ? 'var(--active)' : 'var(--danger)';
+    
+    try {
+      await db.collection('shopkeepers').doc(currentUser.uid).set({ status: newStatus }, { merge: true });
+    } catch(err) {
+      console.error(err);
+      alert("Failed to update status");
+      e.target.checked = !e.target.checked; // Revert switch if failed
+    }
+  });
+}
+
+// --- REAL-TIME WITHDRAWALS ---
 function setupRealtimeWithdrawals() {
   db.collection("withdrawals")
     .where("shopOwnerEmail", "==", currentUser.email)
     .onSnapshot((snapshot) => {
       const fullList = document.getElementById('fullWithdrawList');
       const sideList = document.getElementById('sideWithdrawList');
-      
       let docs = [];
       let totalWithdrawn = 0;
 
@@ -242,7 +289,6 @@ function setupRealtimeWithdrawals() {
         docs.push(w);
       });
 
-      // Sort descending by date
       docs.sort((a,b) => new Date(b.date) - new Date(a.date));
 
       if(docs.length === 0) {
@@ -259,19 +305,16 @@ function setupRealtimeWithdrawals() {
           <div class="w-row">
             <div>
               <span style="font-weight:bold; font-size:14px; color:#fff;">Ksh ${w.amount}</span><br>
-              <span style="font-size:12px; color:#aaa;"><i class="fas fa-phone"></i> ${w.mpesaNumber}</span>
+              <span style="font-size:11px; color:var(--muted)"><i class="fas fa-mobile-alt"></i> ${w.mpesaNumber}</span>
             </div>
             <div style="text-align:right">
                <span style="color:${color}; font-weight:bold; font-size:12px;">${statusIcon} ${w.status.toUpperCase()}</span><br>
                <span style="font-size:10px; color:var(--muted)">${new Date(w.date).toLocaleDateString()}</span>
             </div>
-          </div>
-        `;
+          </div>`;
       });
-
       fullList.innerHTML = html;
       sideList.innerHTML = html;
-      
       window.totalWithdrawn = totalWithdrawn;
       updateWalletDisplay();
     });
@@ -281,7 +324,6 @@ window.requestWithdraw = async (type) => {
   const prefix = type === 'quick' ? 'quick' : 'full';
   const phoneInput = document.getElementById(prefix+'Phone');
   const amtInput = document.getElementById(prefix+'Amount');
-  
   const phone = phoneInput.value;
   const amount = Number(amtInput.value);
 
@@ -306,76 +348,11 @@ window.requestWithdraw = async (type) => {
   } catch(e) { alert(e.message); }
 }
 
-// --- 2. ORDERS (Fixed Fetching) ---
-async function loadOrdersAndWallet() {
-  const list = document.getElementById('ordersList');
-  const recent = document.getElementById('recentActivity');
-  
-  try {
-    // Client-side sorting to avoid index error
-    const snap = await db.collection("orders").where("shopOwnerEmail", "==", currentUser.email).get();
-    
-    let docs = [];
-    let totalEarnings = 0;
-
-    snap.forEach(doc => {
-      const o = doc.data();
-      totalEarnings += Number(o.total || 0);
-      docs.push(o);
-    });
-    
-    // Sort desc
-    docs.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    document.getElementById('statOrders').textContent = docs.length;
-    list.innerHTML = ''; recent.innerHTML = '';
-
-    if(docs.length === 0) {
-      list.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">No orders yet.</div>';
-    } else {
-      docs.forEach(o => {
-        const itemHtml = `
-          <div class="order-item">
-            <div>
-              <span style="font-weight:bold; color:#fff;">${o.customerEmail || 'Guest'}</span><br>
-              <span style="font-size:12px; color:#ccc;">${(o.items||[]).map(i=>i.name + ' (x'+i.qty+')').join(', ')}</span>
-            </div>
-            <div style="text-align:right">
-              <span style="color:var(--active); font-weight:bold;">+ Ksh ${o.total}</span><br>
-              <span style="font-size:10px; color:var(--muted)">${o.status || 'Paid'}</span>
-            </div>
-          </div>`;
-        list.insertAdjacentHTML('beforeend', itemHtml);
-        recent.insertAdjacentHTML('beforeend', itemHtml);
-      });
-    }
-
-    document.getElementById('statEarnings').textContent = "Ksh " + totalEarnings;
-    window.totalEarnings = totalEarnings;
-    updateWalletDisplay();
-
-  } catch(e) {
-    console.error("Order Error:", e);
-    list.innerHTML = `<div style="color:red; padding:20px;">Error loading orders: ${e.message}</div>`;
-  }
-}
-
-function updateWalletDisplay() {
-  const earnings = window.totalEarnings || 0;
-  const withdrawn = window.totalWithdrawn || 0;
-  walletBalance = earnings - withdrawn;
-  
-  const txt = "Ksh " + walletBalance.toLocaleString();
-  document.getElementById('statWallet').textContent = txt;
-  document.getElementById('sideWallet').textContent = txt;
-}
-
-// --- 3. PROFILE ---
+// --- PROFILE ---
 async function loadProfile() {
   try {
     let doc = await db.collection('shopkeepers').doc(currentUser.uid).get();
     if(!doc.exists) doc = await db.collection('users').doc(currentUser.uid).get();
-    
     if(doc.exists){
       const data = doc.data();
       document.getElementById('headerShopName').textContent = data.shopName || "My Shop";
@@ -390,7 +367,7 @@ async function loadProfile() {
     }
   } catch(e){ console.log("Profile load error", e); }
 }
-// ... (Profile save & Product save logic remains same as before) ...
+
 document.getElementById('profileFile').addEventListener('change', async (e) => {
   if(e.target.files[0]){
     const base64 = await toBase64(e.target.files[0]);
@@ -411,6 +388,8 @@ document.getElementById('prof_save').addEventListener('click', async () => {
   btn.textContent = "Update Profile";
   loadProfile();
 });
+
+// --- PRODUCTS ---
 document.getElementById('p_save').addEventListener('click', async () => {
   const name = document.getElementById('p_name').value;
   const price = document.getElementById('p_price').value;
@@ -438,6 +417,7 @@ document.getElementById('p_save').addEventListener('click', async () => {
   btn.textContent = "Save Product";
   btn.disabled = false;
 });
+
 async function loadProducts() {
   const grid = document.getElementById('productsGrid');
   const snap = await db.collection("products").where("ownerEmail", "==", currentUser.email).get();
@@ -449,6 +429,46 @@ async function loadProducts() {
   });
 }
 window.delProd = async(id) => { if(confirm("Delete?")) { await db.collection("products").doc(id).delete(); loadProducts(); } }
+
+// --- ORDERS ---
+async function loadOrdersAndWallet() {
+  const list = document.getElementById('ordersList');
+  const recent = document.getElementById('recentActivity');
+  try {
+    const snap = await db.collection("orders").where("shopOwnerEmail", "==", currentUser.email).get();
+    let docs = [];
+    let totalEarnings = 0;
+    snap.forEach(doc => {
+      const o = doc.data();
+      totalEarnings += Number(o.total || 0);
+      docs.push(o);
+    });
+    docs.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    document.getElementById('statOrders').textContent = docs.length;
+    list.innerHTML = ''; recent.innerHTML = '';
+    if(docs.length === 0) {
+      list.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">No orders yet.</div>';
+    } else {
+      docs.forEach(o => {
+        const itemHtml = `<div class="order-item"><div><span style="font-weight:bold; color:#fff;">${o.customerEmail || 'Guest'}</span><br><span style="font-size:12px; color:#ccc;">${(o.items||[]).map(i=>i.name + ' (x'+i.qty+')').join(', ')}</span></div><div style="text-align:right"><span style="color:var(--active); font-weight:bold;">+ Ksh ${o.total}</span><br><span style="font-size:10px; color:var(--muted)">${o.status || 'Paid'}</span></div></div>`;
+        list.insertAdjacentHTML('beforeend', itemHtml);
+        recent.insertAdjacentHTML('beforeend', itemHtml);
+      });
+    }
+    document.getElementById('statEarnings').textContent = "Ksh " + totalEarnings;
+    window.totalEarnings = totalEarnings;
+    updateWalletDisplay();
+  } catch(e) { console.error("Order Error:", e); }
+}
+
+function updateWalletDisplay() {
+  const earnings = window.totalEarnings || 0;
+  const withdrawn = window.totalWithdrawn || 0;
+  walletBalance = earnings - withdrawn;
+  const txt = "Ksh " + walletBalance.toLocaleString();
+  document.getElementById('statWallet').textContent = txt;
+  document.getElementById('sideWallet').textContent = txt;
+}
 </script>
 </body>
 </html>

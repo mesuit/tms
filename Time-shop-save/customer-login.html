@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Customer Login — Time Shop Save</title>
 
-<link rel="icon" type="image/svg+xml"
-      href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%237b2ff7'/><stop offset='1' stop-color='%23ff6ec7'/></linearGradient></defs><rect width='100' height='100' rx='16' fill='url(%23g)'/><text x='50' y='60' font-family='Inter,Arial,sans-serif' font-weight='800' font-size='28' text-anchor='middle' fill='%23070416'>TSS</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%237b2ff7'/><stop offset='1' stop-color='%23ff6ec7'/></linearGradient></defs><rect width='100' height='100' rx='16' fill='url(%23g)'/><text x='50' y='60' font-family='Inter,Arial,sans-serif' font-weight='800' font-size='28' text-anchor='middle' fill='%23070416'>TSS</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root { --bg1:#070416; --g1:#7b2ff7; --g2:#ff6ec7; --g3:#2be7ff; --text:#eaf3ff; --muted:rgba(234,243,255,0.65); --accent:linear-gradient(90deg,var(--g1),var(--g2),var(--g3)); }
@@ -75,7 +74,7 @@ const resetSuccess = document.getElementById("resetSuccess");
 
 function showError(msg) {
   loginMsg.textContent = msg;
-  loginMsg.classList.remove('hidden');
+  loginMsg.classList.remove("hidden");
 }
 
 // Toggle Forms
@@ -106,8 +105,8 @@ loginForm.addEventListener("submit", async e => {
     localStorage.setItem('rememberUser', email);
     localStorage.setItem('tss_last_login', email);
     
-    // Redirect
-    window.location.href = "profile.html";
+    // REDIRECT TO EXPLORE (Optimization)
+    window.location.href = "explore.html";
 
   } catch (err) {
     console.error(err);
